@@ -683,6 +683,12 @@ fn add_pkg_config_path() {
 fn add_pkg_config_path() {}
 
 fn check_features(include_paths: &[PathBuf]) {
+    unsafe {
+        for var in ["CC", "CXX", "CPP", "LD", "AR", "AS", "ARCH", "CROSS_TRIPLE", "CROSS_ROOT", "XCC_PREFIX", "FC", "CROSS_COMPILE", "CMAKE_TOOLCHAIN_FILE"] {
+            env::set_var(var, "");
+        }
+    }
+
     let clang = clang::Clang::new().expect("Cannot find clang");
     let index = clang::Index::new(&clang, false, true);
 
@@ -714,16 +720,13 @@ fn check_features(include_paths: &[PathBuf]) {
         .map(|lib| (lib.name, (0, 0)))
         .collect::<HashMap<_, _>>();
 
-    let mut include_args = include_paths
+    let include_args = include_paths
         .iter()
         .map(|path| format!("-I{}", path.to_string_lossy()))
         .collect::<Vec<_>>();
 
     let mut parser=  index.parser("check.c");
 
-    if let Ok(sysroot) = env::var("SYSROOT") {
-       include_args.extend(["--sysroot", sysroot.as_str()].iter().copied().map(String::from));
-    }
     parser.arguments(&include_args);
 
     let tu = parser
