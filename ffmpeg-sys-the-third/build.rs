@@ -714,10 +714,13 @@ fn check_features(include_paths: &[PathBuf]) {
         .map(|lib| (lib.name, (0, 0)))
         .collect::<HashMap<_, _>>();
 
-    let include_args = include_paths
+    let mut include_args = include_paths
         .iter()
         .map(|path| format!("-I{}", path.to_string_lossy()))
         .collect::<Vec<_>>();
+    if let Ok(extra_args) = env::var("FFMPEG_CHECK_FEATURES_EXTRA_CLANG_ARGS") {
+        include_args.extend(extra_args.split_whitespace().map(String::from));
+    }
 
     let tu = index
         .parser("check.c")
