@@ -942,6 +942,7 @@ fn main() {
         }
     }
 
+    dbg!(&include_paths);
     check_features(&include_paths);
 
     let clang_includes = include_paths
