@@ -719,9 +719,15 @@ fn check_features(include_paths: &[PathBuf]) {
         .map(|path| format!("-I{}", path.to_string_lossy()))
         .collect::<Vec<_>>();
 
-    let tu = index
+    let mut parser=  index
         .parser("check.c")
-        .arguments(&include_args)
+        .arguments(&include_args);
+
+    if let Ok(sysroot) = env::var("SYSROOT") {
+        parser.arguments(&["--sysroot", sysroot.as_str()]);
+    }
+
+    let tu = parser
         .detailed_preprocessing_record(true)
         .unsaved(&[clang::Unsaved::new("check.c", &code)])
         .parse()
