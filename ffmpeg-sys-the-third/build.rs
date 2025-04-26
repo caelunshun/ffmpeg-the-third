@@ -684,7 +684,7 @@ fn add_pkg_config_path() {}
 
 fn check_features(include_paths: &[PathBuf]) {
     let clang = clang::Clang::new().expect("Cannot find clang");
-    let index = clang::Index::new(&clang, false, false);
+    let index = clang::Index::new(&clang, false, true);
 
     println!("loaded clang version: {}", clang::get_version());
 
