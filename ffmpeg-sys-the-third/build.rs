@@ -714,17 +714,17 @@ fn check_features(include_paths: &[PathBuf]) {
         .map(|lib| (lib.name, (0, 0)))
         .collect::<HashMap<_, _>>();
 
-    let include_args = include_paths
+    let mut include_args = include_paths
         .iter()
         .map(|path| format!("-I{}", path.to_string_lossy()))
         .collect::<Vec<_>>();
 
     let mut parser=  index.parser("check.c");
-    parser.arguments(&include_args);
 
     if let Ok(sysroot) = env::var("SYSROOT") {
-        parser.arguments(&["--sysroot", sysroot.as_str()]);
+       include_args.extend(["--sysroot", sysroot.as_str()].iter().copied().map(String::from));
     }
+    parser.arguments(&include_args);
 
     let tu = parser
         .detailed_preprocessing_record(true)
