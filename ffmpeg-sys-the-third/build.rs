@@ -719,9 +719,8 @@ fn check_features(include_paths: &[PathBuf]) {
         .map(|path| format!("-I{}", path.to_string_lossy()))
         .collect::<Vec<_>>();
 
-    let mut parser=  index
-        .parser("check.c")
-        .arguments(&include_args);
+    let mut parser=  index.parser("check.c");
+    parser.arguments(&include_args);
 
     if let Ok(sysroot) = env::var("SYSROOT") {
         parser.arguments(&["--sysroot", sysroot.as_str()]);
