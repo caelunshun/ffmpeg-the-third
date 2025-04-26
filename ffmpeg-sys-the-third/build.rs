@@ -741,6 +741,7 @@ fn check_features(include_paths: &[PathBuf]) {
     });
 
     for def in clang::sonar::find_definitions(tu.get_entity().get_children()) {
+        dbg!(&def);
         if let clang::sonar::DefinitionValue::Integer(_, value) = def.value {
             if let Some(name) = def.name.strip_prefix("LIB") {
                 if let Some(name) = name.strip_suffix("_VERSION_MAJOR") {
